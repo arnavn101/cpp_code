@@ -2,84 +2,80 @@
 
 using namespace std;
 
-// Initialize variables
-int N = 4;
-vector<int> test_graph[4];
-bool visited[4];
-bool visited_[4];
-int distance_list[4];
-queue<int> q;
+// Initialize Variables
+vector<int> adj[10];
+queue<int> queue_nodes;
+bool visited[10];
+int list_distance[10];
 
-void initialize_DFS(int current_node){
-    if(visited[current_node]){
-        return;
-    }
-    visited[current_node] = true;
-    
-    // process the nodes in the path
-    for(auto next_node : test_graph[current_node]){
-        cout << next_node << " ";
-        initialize_DFS(next_node);
-    }
+// Basic Depth First Search
+void dfs(int current_node){
+	if (visited[current_node])
+	{
+		return; 
+	}
+	visited[current_node] = true;
+
+	// process the next nodes
+	for (auto u : adj[current_node]){
+		cout << to_string(u) << " ";
+		dfs(u);
+	}
 }
 
-void initialize_BFS(int starting_node){
-    visited_[starting_node] = true;
-    distance_list[starting_node] = 0;
-    q.push(starting_node);
-
-    while (!q.empty())
-    {
-        int s = q.front();
-        q.pop();
-
-        // Process nodes in path
-        for(auto u : test_graph[s]){
-            if(visited_[u]){
-                continue;
-            }
-            visited_[u] = true;
-            distance_list[u] = distance_list[s] + 1;
-            q.push(u);
-        }  
-    }
+void initialize_false(){
+	for (int i = 0; i < 10; i++)
+	{
+		visited[i] = false;
+	}
+	
 }
 
-void graph_representation(){
-    /* 
-    Sample Graph
+// Intricate Breadth First Search
+void bfs(int current_node){
+	visited[current_node] = true;
+	list_distance[current_node] = 0;
+	queue_nodes.push(current_node);
 
-    (1) -> (2) -> (3) -> (4)
-    */
-    
-    // Adjacency list representation
-    vector<int> adj_list[N];
-    adj_list[1].push_back(2);
-    adj_list[2].push_back(3);
-    adj_list[3].push_back(4);
+	while(!queue_nodes.empty()){
+		int s = queue_nodes.front();
+		queue_nodes.pop();
 
-    // Adjacency matrix represenation
-    int adj_matrix[N][N];
-    adj_matrix[0][0] = 0;
-    adj_matrix[0][1] = 1; // So on....
+		// Process node s (get nodes seperate by an edge from it)
+		for(auto u : adj[s])
+		{
+			if(visited[u]){
+				continue;
+			}
+			visited[u] = true;
+			list_distance[u] = list_distance[s] + 1;
+			queue_nodes.push(u);
+			cout << to_string(u) << " ";
+		}
 
-    // Edge List Representation
-    vector<pair<int, int>> edge_list;
-    edge_list.push_back({1, 2});
-    edge_list.push_back({2, 3});
-    edge_list.push_back({3, 4});
+	}
 }
 
-int main(){ 
-    test_graph[1].push_back(2);
-    test_graph[1].push_back(4);
-    test_graph[2].push_back(3);
-    test_graph[2].push_back(5);
-    test_graph[3].push_back(6);
-    test_graph[5].push_back(6);
-    
-    //initialize_DFS(1);
-    //initialize_BFS(1);
-    
-    return 0;
-}
+
+// Main function
+int main(){
+	// Sample Graph  4 --> 1 --> 2 --> 3 --> 5  (Start at 1)
+    adj[1].push_back(2);
+    adj[1].push_back(4);
+    adj[2].push_back(3);
+    adj[2].push_back(5);
+	
+	// Run DFS
+	dfs(1);
+
+	// Reset Variables
+	initialize_false();
+	cout << "\n";
+
+	// Run BFS
+	bfs(1);
+
+	return 0; 	
+	
+}	
+
